@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Contracts</h2>
+            <a href="{{ url_for('create_contract') }}" class="btn btn-primary">Create New Contract</a>
+        </div>
+        
+        {% if contracts %}
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <!-- Replace the existing contracts table with this -->
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Client Name</th>
+                                <th>Project</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Signing Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for contract in contracts %}
+                            <tr>
+                                <td>{{ contract.client_name }}</td>
+                                <td>{{ contract.project_scope|truncate(50) }}</td>
+                                <td>${{ contract.total_amount }}</td>
+                                <td>
+                                    <span class="badge bg-{{ contract.status == 'completed' and 'success' or contract.status == 'partially_signed' and 'warning' or 'secondary' }}">
+                                        {{ contract.status|title }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <small>
+                                        Agent: 
+                                        {% if contract.agent_status == 'signed' %}
+                                            <i class="fas fa-check text-success"></i>
+                                        {% else %}
+                                            <i class="fas fa-clock text-warning"></i>
+                                        {% endif %}
+                                        <br>
+                                        Client: 
+                                        {% if contract.client_status == 'signed' %}
+                                            <i class="fas fa-check text-success"></i>
+                                        {% else %}
+                                            <i class="fas fa-clock text-warning"></i>
+                                        {% endif %}
+                                    </small>
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('view_contract', contract_id=contract.id) }}" class="btn btn-sm btn-primary">View</a>
+                                    {% if contract.status == 'completed' %}
+                                    <a href="{{ url_for('download_contract', contract_id=contract.id) }}" class="btn btn-sm btn-success">
+                                        <i class="fas fa-download"></i> Download
+                                    </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            No contracts found. Create your first contract using the button above.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

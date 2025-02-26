@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}View Contract{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">Contract Details</h2>
+                {% if contract.status == 'completed' %}
+                <a href="{{ url_for('download_contract', contract_id=contract.id) }}" class="btn btn-success">
+                    Download Contract
+                </a>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <div class="status-banner alert {% if contract.status == 'completed' %}alert-success{% elif contract.status == 'partially_signed' %}alert-warning{% else %}alert-info{% endif %}">
+                    Current Status: {{ contract.status|title }}
+                </div>
+
+                <div class="contract-content mt-4">
+                    <h3>Service Agreement</h3>
+                    <p>This Service Agreement is entered into between:</p>
+                    <p><strong>Service Provider:</strong> Vertica AI</p>
+                    <p><strong>Client:</strong> {{ contract.client_name }}</p>
+                    
+                    <h4 class="mt-4">Project Scope:</h4>
+                    <pre class="bg-light p-3">{{ contract.project_scope }}</pre>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h4>Contract Details:</h4>
+                            <p><strong>Total Amount:</strong> ${{ contract.total_amount }}</p>
+                            <p><strong>Start Date:</strong> {{ contract.start_date }}</p>
+                            <p><strong>End Date:</strong> {{ contract.end_date }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Signing Status:</h4>
+                            <div class="signing-status">
+                                <p>
+                                    <strong>Agent Signature:</strong>
+                                    {% if contract.agent_signature %}
+                                        ✓ Signed on {{ contract.agent_signed_date }}
+                                    {% else %}
+                                        Pending
+                                    {% endif %}
+                                </p>
+                                <p>
+                                    <strong>Client Signature:</strong>
+                                    {% if contract.client_signature %}
+                                        ✓ Signed on {{ contract.client_signed_date }}
+                                    {% else %}
+                                        Pending
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if contract.agent_signature or contract.client_signature %}
+                    <div class="signatures mt-4">
+                        <h4>Signatures:</h4>
+                        <div class="row">
+                            {% if contract.agent_signature %}
+                            <div class="col-md-6">
+                                <p><strong>Agent Signature:</strong></p>
+                                <img src="{{ contract.agent_signature }}" alt="Agent Signature" class="img-fluid">
+                            </div>
+                            {% endif %}
+                            {% if contract.client_signature %}
+                            <div class="col-md-6">
+                                <p><strong>Client Signature:</strong></p>
+                                <img src="{{ contract.client_signature }}" alt="Client Signature" class="img-fluid">
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

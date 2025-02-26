@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Contract Signing Request</h2>
+    <p>Hello,</p>
+    <p>You have a contract that requires your signature. Please review and sign the contract using the button below.</p>
+    
+    <div style="margin: 30px 0;">
+        <a href="{{ signing_url }}" class="button" style="background-color: #4CAF50; color: white; padding: 15px 32px; text-decoration: none; display: inline-block; border-radius: 4px;">
+            View and Sign Contract
+        </a>
+    </div>
+
+    <p>Contract Details:</p>
+    <ul>
+        <li>Client: {{ contract.client_name }}</li>
+        <li>Total Amount: ${{ contract.total_amount }}</li>
+        <li>Start Date: {{ contract.start_date }}</li>
+        <li>End Date: {{ contract.end_date }}</li>
+    </ul>
+
+    <p>If you're unable to click the button, copy and paste this URL into your browser:</p>
+    <p style="word-break: break-all;">{{ signing_url }}</p>
+
+    <p>Best regards,<br>Contract Sign System</p>
+</body>
+</html>

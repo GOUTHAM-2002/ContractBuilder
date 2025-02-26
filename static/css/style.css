@@ -1,0 +1,96 @@
+.contract-details pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+#signatureCanvas {
+    border: 1px solid #ccc;
+    cursor: crosshair;
+}
+
+.signature-section {
+    text-align: center;
+}
+
+.card {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    margin-bottom: 2rem;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+}
+
+.status-banner {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 2rem;
+}
+
+.signing-status {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 5px;
+}
+
+.signatures img {
+    max-width: 300px;
+    border: 1px solid #dee2e6;
+    padding: 10px;
+    background-color: white;
+}
+
+.contract-content {
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.contract-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+}
+
+.contract-section:last-child {
+    border-bottom: none;
+}
+
+.scope-content {
+    white-space: pre-wrap;
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+}
+
+.signature-pad-container {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.signature-pad {
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+    cursor: crosshair;
+    background-color: #fff;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.signature-controls {
+    margin-top: 1rem;
+}
+
+.signature-box {
+    border: 1px solid #dee2e6;
+    padding: 1rem;
+    margin-top: 0.5rem;
+    border-radius: 0.5rem;
+    background-color: #fff;
+}
+
+.signature-box img {
+    max-width: 300px;
+    margin: 0 auto;
+    display: block;
+}

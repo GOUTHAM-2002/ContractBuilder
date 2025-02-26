@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        @page {
+            margin: 2.5cm;
+            @top-right {
+                content: "Page " counter(page) " of " counter(pages);
+            }
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            font-size: 12pt;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .contract-title {
+            font-size: 24pt;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .subsection {
+            margin-left: 20px;
+        }
+        .signature-block {
+            margin-top: 20px;
+            border-top: 1px solid #ccc;
+            padding-top: 10px;
+        }
+        .payment-terms {
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Service Agreement</h1>
+        <p>This Service Agreement ("Agreement") is entered into as of {{ contract.created_at.strftime('%B %d, %Y') }}, by and between Vertica AI ("Service Provider" or "Agency"), and {{ contract.client_name }} ("Client").</p>
+    </div>
+
+    <div class="section">
+        <div class="section-title">1. RECITALS:</div>
+        <p>WHEREAS, the Client desires to engage Vertica AI to perform the projects as described herein; and</p>
+        <p>WHEREAS, Vertica AI agrees to provide the services set forth in this Agreement in accordance with the terms and conditions contained herein.</p>
+    </div>
+
+    <div class="section">
+        <div class="section-title">2. SCOPE OF WORK:</div>
+        <div class="subsection">
+            {{ contract.project_scope|safe }}
+        </div>
+        <p><strong>Total Amount:</strong> ${{ contract.total_amount }}</p>
+        <p><strong>Project Duration:</strong> {{ contract.start_date.strftime('%B %d, %Y') }} to {{ contract.end_date.strftime('%B %d, %Y') }}</p>
+    </div>
+
+    <div class="section">
+        <div class="section-title">3. PAYMENT TERMS:</div>
+        <div class="payment-terms">
+            <p><strong>Schedule:</strong> Payment for each milestone is due upon the Client's written approval of the milestone deliverables.</p>
+            <p><strong>Method:</strong> Payments shall be made via Stripe/Remitly to the account designated by Vertica AI.</p>
+            <p><strong>Late Payment:</strong> In the event of a delayed payment, both parties agree to discuss and resolve the matter promptly to avoid impacting the project timeline.</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">4. TERM & TERMINATION:</div>
+        <div class="subsection">
+            <p><strong>Term:</strong> This Agreement shall commence on {{ contract.start_date.strftime('%B %d, %Y') }} and remain in effect until {{ contract.end_date.strftime('%B %d, %Y') }}, or until all deliverables are completed and accepted by the Client.</p>
+            <p><strong>Termination:</strong> In the event of termination, the parties agree to resolve any outstanding matters, including disputed payments, through an amicable "talking stage" negotiation.</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">5. CONFIDENTIALITY:</div>
+        <div class="subsection">
+            <p>Both parties agree to maintain the confidentiality of all proprietary and confidential information disclosed during the term of this Agreement and to use such information solely for the purpose of performing their obligations under this Agreement.</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">6. INTELLECTUAL PROPERTY:</div>
+        <div class="subsection">
+            <p><strong>Ownership:</strong> All deliverables and related work product shall remain the property of Vertica AI until full payment is received. Upon receipt of the final payment, ownership of the deliverables will transfer to the Client.</p>
+            <p><strong>License:</strong> Vertica AI grants the Client a non-exclusive, perpetual license to use the deliverables solely for their intended purposes.</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">7. GOVERNING LAW:</div>
+        <div class="subsection">
+            <p>This Agreement shall be governed by and construed in accordance with the laws of the State of Ohio, without regard to its conflict of laws principles.</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">8. DISPUTE RESOLUTION:</div>
+        <div class="subsection">
+            <p>In the event of any dispute or controversy arising out of or relating to this Agreement, the parties agree to first attempt to resolve the matter amicably through good-faith negotiations ("talking stage"). Should such efforts fail, the dispute may be submitted to mediation or arbitration as mutually agreed upon by the parties.</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">9. ENTIRE AGREEMENT:</div>
+        <div class="subsection">
+            <p>This Agreement, including any attachments or referenced documents, constitutes the entire understanding between the parties with respect to the subject matter hereof and supersedes all prior and contemporaneous agreements, whether written or oral.</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">10. AMENDMENTS:</div>
+        <div class="subsection">
+            <p>Any amendments or modifications to this Agreement must be in writing and signed by both parties.</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">11. NOTICES:</div>
+        <div class="subsection">
+            <p>All notices under this Agreement shall be in writing and delivered via email or certified mail to the addresses specified below or such other address as either party may designate in writing.</p>
+            <p><strong>For Vertica AI:</strong><br>
+            Bangalore, India<br>
+            shreyasgrandhe24@gmail.com</p>
+            <p><strong>For {{ contract.client_name }}:</strong><br>
+            {{ contract.client_email }}</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">12. SIGNATURES:</div>
+        <div class="signatures">
+            <div class="signature-block">
+                <p><strong>Vertica AI (Service Provider):</strong></p>
+                {% if contract.agent_signature %}
+                <img src="{{ contract.agent_signature }}" alt="Agent Signature" style="max-width: 300px;">
+                <p>Date: {{ contract.agent_signed_date.strftime('%B %d, %Y') }}</p>
+                {% endif %}
+            </div>
+
+            <div class="signature-block">
+                <p><strong>{{ contract.client_name }} (Client):</strong></p>
+                {% if contract.client_signature %}
+                <img src="{{ contract.client_signature }}" alt="Client Signature" style="max-width: 300px;">
+                <p>Date: {{ contract.client_signed_date.strftime('%B %d, %Y') }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

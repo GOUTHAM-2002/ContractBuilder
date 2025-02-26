@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% block title %}Sign Contract{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="mb-0">Contract Details</h2>
+            </div>
+            <div class="card-body">
+                <h3>Contract with {{ contract.client_name }}</h3>
+                <div class="contract-details mt-4">
+                    <h4>Project Scope:</h4>
+                    <pre class="bg-light p-3">{{ contract.project_scope }}</pre>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <p><strong>Total Amount:</strong> ${{ contract.total_amount }}</p>
+                            <p><strong>Start Date:</strong> {{ contract.start_date }}</p>
+                            <p><strong>End Date:</strong> {{ contract.end_date }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Status:</strong> {{ contract.status }}</p>
+                            <p><strong>Client Email:</strong> {{ contract.client_email }}</p>
+                            <p><strong>Agent Email:</strong> {{ contract.agent_email }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h3>Sign Contract</h3>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" id="signatureForm">
+                            <input type="hidden" name="email" value="{{ request.args.get('email') }}">
+                            <input type="hidden" name="signature" id="signatureData">
+                            
+                            <!-- Show who is signing -->
+                            <div class="alert alert-info mb-4">
+                                Signing as: {{ request.args.get('email') }}
+                            </div>
+                            
+                            <!-- Rest of the form content -->
+                            <div class="mb-4">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="signatureType" id="drawSignature" value="draw" checked>
+                                    <label class="form-check-label" for="drawSignature">Draw Signature</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="signatureType" id="typeSignature" value="type">
+                                    <label class="form-check-label" for="typeSignature">Type Signature</label>
+                                </div>
+                            </div>
+                            
+                            <div id="drawSignatureSection">
+                                <canvas id="signatureCanvas" class="border" width="600" height="200"></canvas>
+                                <div class="mt-3">
+                                    <button type="button" class="btn btn-secondary" onclick="clearSignature()">Clear</button>
+                                </div>
+                            </div>
+                            
+                            <div id="typeSignatureSection" style="display: none;">
+                                <div class="mb-3">
+                                    <label for="typedSignature" class="form-label">Type your full name</label>
+                                    <input type="text" class="form-control" id="typedSignature" placeholder="Your full name">
+                                    <select class="form-select mt-2" id="fontSelect">
+                                        <option value="Pacifico">Signature Style 1</option>
+                                        <option value="Dancing Script">Signature Style 2</option>
+                                        <option value="Great Vibes">Signature Style 3</option>
+                                    </select>
+                                </div>
+                                <div id="signaturePreview" class="border p-3 mb-3" style="min-height: 100px;">
+                                    <p class="text-muted">Signature preview will appear here</p>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary mt-3">Sign Contract</button>
+                        </form>
+                    </div>
+                </div>
+
+                {% block head %}
+                <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Dancing+Script&family=Great+Vibes&display=swap" rel="stylesheet">
+                {% endblock %}
+
+                {% block scripts %}
+                <script>
+                    const canvas = document.getElementById('signatureCanvas');
+                    const ctx = canvas.getContext('2d');
+                    let isDrawing = false;
+                    let lastX = 0;
+                    let lastY = 0;
+
+                    canvas.addEventListener('mousedown', startDrawing);
+                    canvas.addEventListener('mousemove', draw);
+                    canvas.addEventListener('mouseup', stopDrawing);
+                    canvas.addEventListener('mouseout', stopDrawing);
+
+                    // Touch events support
+                    canvas.addEventListener('touchstart', handleTouch);
+                    canvas.addEventListener('touchmove', handleTouch);
+                    canvas.addEventListener('touchend', stopDrawing);
+
+                    function handleTouch(e) {
+                        e.preventDefault();
+                        const touch = e.touches[0];
+                        const rect = canvas.getBoundingClientRect();
+                        const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 'mousemove', {
+                            clientX: touch.clientX - rect.left,
+                            clientY: touch.clientY - rect.top
+                        });
+                        canvas.dispatchEvent(mouseEvent);
+                    }
+
+                    function startDrawing(e) {
+                        isDrawing = true;
+                        [lastX, lastY] = [e.offsetX, e.offsetY];
+                    }
+
+                    function draw(e) {
+                        if (!isDrawing) return;
+                        ctx.beginPath();
+                        ctx.moveTo(lastX, lastY);
+                        ctx.lineTo(e.offsetX, e.offsetY);
+                        ctx.stroke();
+                        [lastX, lastY] = [e.offsetX, e.offsetY];
+                    }
+
+                    function stopDrawing() {
+                        isDrawing = false;
+                    }
+
+                    function clearSignature() {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    }
+
+                    document.querySelectorAll('input[name="signatureType"]').forEach(radio => {
+                        radio.addEventListener('change', function() {
+                            document.getElementById('drawSignatureSection').style.display = 
+                                this.value === 'draw' ? 'block' : 'none';
+                            document.getElementById('typeSignatureSection').style.display = 
+                                this.value === 'type' ? 'block' : 'none';
+                        });
+                    });
+
+                    const typedSignature = document.getElementById('typedSignature');
+                    const fontSelect = document.getElementById('fontSelect');
+                    const preview = document.getElementById('signaturePreview');
+
+                    function updatePreview() {
+                        if (typedSignature.value) {
+                            preview.innerHTML = `<div style="font-family: ${fontSelect.value}; font-size: 2.5rem;">${typedSignature.value}</div>`;
+                        }
+                    }
+
+                    typedSignature.addEventListener('input', updatePreview);
+                    fontSelect.addEventListener('change', updatePreview);
+
+                    document.getElementById('signatureForm').onsubmit = function(e) {
+                        const signatureType = document.querySelector('input[name="signatureType"]:checked').value;
+                        
+                        if (signatureType === 'draw') {
+                            document.getElementById('signatureData').value = canvas.toDataURL();
+                        } else {
+                            // Convert typed signature to image
+                            const tempCanvas = document.createElement('canvas');
+                            tempCanvas.width = 600;
+                            tempCanvas.height = 200;
+                            const ctx = tempCanvas.getContext('2d');
+                            ctx.fillStyle = 'white';
+                            ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+                            ctx.font = `72px ${fontSelect.value}`;
+                            ctx.fillStyle = 'black';
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+                            ctx.fillText(typedSignature.value, tempCanvas.width/2, tempCanvas.height/2);
+                            document.getElementById('signatureData').value = tempCanvas.toDataURL();
+                        }
+                        return true;
+                    };
+                </script>
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
