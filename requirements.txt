@@ -5,3 +5,4 @@ wtforms
 gunicorn
 weasyprint
 dotenv
+email_validator
