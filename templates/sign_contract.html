@@ -5,44 +5,116 @@
 <div class="row justify-content-center">
     <div class="col-md-10">
         <div class="card">
-            <div class="card-header">
-                <h2 class="mb-0">Contract Details</h2>
+            <div class="card-header bg-dark text-white">
+                <h2 class="mb-0">
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Vertica AI" height="40" class="me-2">
+                    Service Agreement
+                </h2>
             </div>
             <div class="card-body">
-                <h3>Contract with {{ contract.client_name }}</h3>
-                <div class="contract-details mt-4">
-                    <h4>Project Scope:</h4>
-                    <pre class="bg-light p-3">{{ contract.project_scope }}</pre>
-                    
-                    <div class="row mt-4">
-                        <div class="col-md-6">
-                            <p><strong>Total Amount:</strong> ${{ contract.total_amount }}</p>
-                            <p><strong>Start Date:</strong> {{ contract.start_date }}</p>
-                            <p><strong>End Date:</strong> {{ contract.end_date }}</p>
+                <div class="contract-header text-center mb-4">
+                    <h3>Service Agreement</h3>
+                    <p class="lead">Between</p>
+                    <h4 class="text-primary">VERTICA AI</h4>
+                    <p>and</p>
+                    <h4>{{ contract.client_name }}</h4>
+                    <p class="text-muted">Date: {{ contract.created_at.strftime('%B %d, %Y') if contract.created_at else '' }}</p>
+                </div>
+
+                <!-- Contract Terms -->
+                <div class="contract-terms border rounded p-4 mb-4" style="max-height: 500px; overflow-y: auto;">
+                    <div class="text-center mb-4">
+                        <h2 class="text-primary">VERTICA AI</h2>
+                        <h3>Service Agreement</h3>
+                        <p class="text-muted">Date: {{ contract.created_at.strftime('%B %d, %Y') if contract.created_at else '' }}</p>
+                    </div>
+
+                  
+
+                    <div class="section mb-4">
+                        <div class="border-start ps-3 mb-3">
+
                         </div>
-                        <div class="col-md-6">
-                            <p><strong>Status:</strong> {{ contract.status }}</p>
-                            <p><strong>Client Email:</strong> {{ contract.client_email }}</p>
-                            <p><strong>Agent Email:</strong> {{ contract.agent_email }}</p>
-                        </div>
+                        <p><strong>Total Amount:</strong> ${{ contract.total_amount }}</p>
+                        <p><strong>Project Duration:</strong> {{ contract.start_date }} to {{ contract.end_date }}</p>
+                    </div>
+
+                    <div class="section mb-4">
+                        <h5>3. PAYMENT TERMS:</h5>
+                        <ul class="list-unstyled ps-3">
+                            <li><strong>Schedule:</strong> Payment for each milestone is due upon the Client's written approval of the milestone deliverables.</li>
+                            <li><strong>Method:</strong> Payments shall be made via Stripe/Remitly to the account designated by Vertica AI.</li>
+                            <li><strong>Late Payment:</strong> In the event of a delayed payment, both parties agree to discuss and resolve the matter promptly to avoid impacting the project timeline.</li>
+                        </ul>
+                    </div>
+
+                    <div class="section mb-4">
+                        <h5>4. TERM & TERMINATION:</h5>
+                        <p><strong>Term:</strong> This Agreement shall commence on {{ contract.start_date }} and remain in effect until {{ contract.end_date }}, or until all deliverables are completed and accepted by the Client.</p>
+                        <p><strong>Termination:</strong> In the event of termination, the parties agree to resolve any outstanding matters through an amicable "talking stage" negotiation.</p>
+                    </div>
+
+                    <div class="section mb-4">
+                        <h5>5. CONFIDENTIALITY:</h5>
+                        <p>Both parties agree to maintain the confidentiality of all proprietary and confidential information disclosed during the term of this Agreement and to use such information solely for the purpose of performing their obligations under this Agreement.</p>
+                    </div>
+
+                    <div class="section mb-4">
+                        <h5>6. INTELLECTUAL PROPERTY:</h5>
+                        <ul class="list-unstyled ps-3">
+                            <li><strong>Ownership:</strong> All deliverables and related work product shall remain the property of Vertica AI until full payment is received.</li>
+                            <li><strong>License:</strong> Vertica AI grants the Client a non-exclusive, perpetual license to use the deliverables solely for their intended purposes.</li>
+                        </ul>
+                    </div>
+
+                    <div class="section mb-4">
+                        <h5>7. GOVERNING LAW:</h5>
+                        <p>This Agreement shall be governed by and construed in accordance with the laws of the State of Ohio, without regard to its conflict of laws principles.</p>
+                    </div>
+
+                    <div class="section mb-4">
+                        <h5>8. DISPUTE RESOLUTION:</h5>
+                        <p>In the event of any dispute or controversy arising out of or relating to this Agreement, the parties agree to first attempt to resolve the matter amicably through good-faith negotiations.</p>
+                    </div>
+                </div>
+                <!-- Include all terms sections -->
+                <div class="section mb-4">
+                    <h5>1. RECITALS:</h5>
+                    <p>WHEREAS, the Client desires to engage Vertica AI to perform the projects as described herein; and</p>
+                    <p>WHEREAS, Vertica AI agrees to provide the services set forth in this Agreement in accordance with the terms and conditions contained herein.</p>
+                </div>
+
+                <!-- Add all other sections (2-11) here -->
+                
+                <div class="section mb-4">
+                    <h5>2. SCOPE OF WORK:</h5>
+                    <div class="border-start ps-3">
+                        {{ contract.project_scope|safe }}
+                    </div>
+                    <div class="mt-3">
+                        <p><strong>Total Amount:</strong> ${{ contract.total_amount }}</p>
+                        <p><strong>Project Duration:</strong> {{ contract.start_date }} to {{ contract.end_date }}</p>
                     </div>
                 </div>
 
+                <!-- Add sections 3-11 here -->
+                </div>
+
+                <!-- Signature Section -->
                 <div class="card mt-4">
-                    <div class="card-header">
-                        <h3>Sign Contract</h3>
+                    <div class="card-header bg-light">
+                        <h3 class="mb-0">Electronic Signature</h3>
                     </div>
                     <div class="card-body">
+                        <div class="alert alert-info mb-4">
+                            Signing as: {{ request.args.get('email') }}
+                        </div>
+
                         <form method="POST" id="signatureForm">
                             <input type="hidden" name="email" value="{{ request.args.get('email') }}">
                             <input type="hidden" name="signature" id="signatureData">
                             
-                            <!-- Show who is signing -->
-                            <div class="alert alert-info mb-4">
-                                Signing as: {{ request.args.get('email') }}
-                            </div>
-                            
-                            <!-- Rest of the form content -->
+                            <!-- Signature Type Selection -->
                             <div class="mb-4">
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="signatureType" id="drawSignature" value="draw" checked>
@@ -54,13 +126,15 @@
                                 </div>
                             </div>
                             
+                            <!-- Drawing Canvas -->
                             <div id="drawSignatureSection">
-                                <canvas id="signatureCanvas" class="border" width="600" height="200"></canvas>
+                                <canvas id="signatureCanvas" class="border rounded" width="600" height="200" style="touch-action: none;"></canvas>
                                 <div class="mt-3">
                                     <button type="button" class="btn btn-secondary" onclick="clearSignature()">Clear</button>
                                 </div>
                             </div>
                             
+                            <!-- Typed Signature -->
                             <div id="typeSignatureSection" style="display: none;">
                                 <div class="mb-3">
                                     <label for="typedSignature" class="form-label">Type your full name</label>
@@ -89,30 +163,61 @@
                 <script>
                     const canvas = document.getElementById('signatureCanvas');
                     const ctx = canvas.getContext('2d');
+                    ctx.strokeStyle = '#000';
+                    ctx.lineWidth = 2;
+                    ctx.lineCap = 'round';
+                    
                     let isDrawing = false;
                     let lastX = 0;
                     let lastY = 0;
 
+                    function getTouchPos(canvas, touch) {
+                        const rect = canvas.getBoundingClientRect();
+                        return {
+                            x: touch.clientX - rect.left,
+                            y: touch.clientY - rect.top
+                        };
+                    }
+
+                    function handleTouchStart(e) {
+                        e.preventDefault();
+                        const touch = e.touches[0];
+                        const pos = getTouchPos(canvas, touch);
+                        isDrawing = true;
+                        [lastX, lastY] = [pos.x, pos.y];
+                    }
+
+                    function handleTouchMove(e) {
+                        e.preventDefault();
+                        if (!isDrawing) return;
+                        
+                        const touch = e.touches[0];
+                        const pos = getTouchPos(canvas, touch);
+                        
+                        ctx.beginPath();
+                        ctx.moveTo(lastX, lastY);
+                        ctx.lineTo(pos.x, pos.y);
+                        ctx.stroke();
+                        
+                        [lastX, lastY] = [pos.x, pos.y];
+                    }
+
+                    function handleTouchEnd(e) {
+                        e.preventDefault();
+                        isDrawing = false;
+                    }
+
+                    // Mouse events
                     canvas.addEventListener('mousedown', startDrawing);
                     canvas.addEventListener('mousemove', draw);
                     canvas.addEventListener('mouseup', stopDrawing);
                     canvas.addEventListener('mouseout', stopDrawing);
 
-                    // Touch events support
-                    canvas.addEventListener('touchstart', handleTouch);
-                    canvas.addEventListener('touchmove', handleTouch);
-                    canvas.addEventListener('touchend', stopDrawing);
-
-                    function handleTouch(e) {
-                        e.preventDefault();
-                        const touch = e.touches[0];
-                        const rect = canvas.getBoundingClientRect();
-                        const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 'mousemove', {
-                            clientX: touch.clientX - rect.left,
-                            clientY: touch.clientY - rect.top
-                        });
-                        canvas.dispatchEvent(mouseEvent);
-                    }
+                    // Touch events
+                    canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+                    canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+                    canvas.addEventListener('touchend', handleTouchEnd, { passive: false });
+                    canvas.addEventListener('touchcancel', handleTouchEnd, { passive: false });
 
                     function startDrawing(e) {
                         isDrawing = true;

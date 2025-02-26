@@ -1,76 +1,118 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
     <style>
         @page {
             margin: 2.5cm;
-            @top-right {
+            @top-center {
+                content: "Vertica AI - Service Agreement";
+                font-size: 9pt;
+                color: #666;
+            }
+            @bottom-center {
                 content: "Page " counter(page) " of " counter(pages);
+                font-size: 9pt;
             }
         }
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
-            font-size: 12pt;
+            color: #333;
         }
         .header {
             text-align: center;
+            border-bottom: 3px solid #1a73e8;
+            padding-bottom: 20px;
             margin-bottom: 30px;
         }
-        .contract-title {
-            font-size: 24pt;
+        .company-name {
+            color: #1a73e8;
+            font-size: 32px;
             font-weight: bold;
-            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+        .document-title {
+            font-size: 24px;
+            margin: 15px 0;
+        }
+        .contract-box {
+            border: 2px solid #1a73e8;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
         }
         .section {
-            margin-bottom: 20px;
+            margin: 20px 0;
+            padding: 15px;
+            border-left: 3px solid #1a73e8;
         }
         .section-title {
+            color: #1a73e8;
             font-weight: bold;
             margin-bottom: 10px;
         }
-        .subsection {
-            margin-left: 20px;
+        .signature-section {
+            margin-top: 40px;
+            page-break-inside: avoid;
         }
-        .signature-block {
-            margin-top: 20px;
-            border-top: 1px solid #ccc;
-            padding-top: 10px;
+        .signature-box {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin: 10px 0;
         }
-        .payment-terms {
-            margin-left: 20px;
+        .signature-line {
+            border-top: 1px solid #000;
+            margin-top: 10px;
+            padding-top: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f8f9fa;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Service Agreement</h1>
-        <p>This Service Agreement ("Agreement") is entered into as of {{ contract.created_at.strftime('%B %d, %Y') }}, by and between Vertica AI ("Service Provider" or "Agency"), and {{ contract.client_name }} ("Client").</p>
+        <div class="company-name">VERTICA AI</div>
+        <div class="document-title">Service Agreement</div>
+        <p>Date: {{ contract.created_at.strftime('%B %d, %Y') }}</p>
+    </div>
+
+    <div class="contract-box">
+        <p><strong>Between:</strong></p>
+        <p><strong>Vertica AI</strong> ("Service Provider" or "Agency")</p>
+        <p>and</p>
+        <p><strong>{{ contract.client_name }}</strong> ("Client")</p>
+    </div>
+
+    <!-- Contract Sections -->
+    <div class="section">
+        <div class="section-title">1. RECITALS</div>
+        <p>WHEREAS, the Client desires to engage <strong>Vertica AI</strong> to perform the projects as described herein; and</p>
+        <p>WHEREAS, <strong>Vertica AI</strong> agrees to provide the services set forth in this Agreement in accordance with the terms and conditions contained herein.</p>
     </div>
 
     <div class="section">
-        <div class="section-title">1. RECITALS:</div>
-        <p>WHEREAS, the Client desires to engage Vertica AI to perform the projects as described herein; and</p>
-        <p>WHEREAS, Vertica AI agrees to provide the services set forth in this Agreement in accordance with the terms and conditions contained herein.</p>
-    </div>
-
-    <div class="section">
-        <div class="section-title">2. SCOPE OF WORK:</div>
-        <div class="subsection">
-            {{ contract.project_scope|safe }}
-        </div>
-        <p><strong>Total Amount:</strong> ${{ contract.total_amount }}</p>
-        <p><strong>Project Duration:</strong> {{ contract.start_date.strftime('%B %d, %Y') }} to {{ contract.end_date.strftime('%B %d, %Y') }}</p>
-    </div>
-
-    <div class="section">
-        <div class="section-title">3. PAYMENT TERMS:</div>
-        <div class="payment-terms">
-            <p><strong>Schedule:</strong> Payment for each milestone is due upon the Client's written approval of the milestone deliverables.</p>
-            <p><strong>Method:</strong> Payments shall be made via Stripe/Remitly to the account designated by Vertica AI.</p>
-            <p><strong>Late Payment:</strong> In the event of a delayed payment, both parties agree to discuss and resolve the matter promptly to avoid impacting the project timeline.</p>
-        </div>
+        <div class="section-title">2. SCOPE OF WORK</div>
+        <div class="content">{{ contract.project_scope|safe }}</div>
+        <table>
+            <tr>
+                <th>Total Amount</th>
+                <td>${{ contract.total_amount }}</td>
+            </tr>
+            <tr>
+                <th>Project Duration</th>
+                <td>{{ contract.start_date.strftime('%B %d, %Y') }} to {{ contract.end_date.strftime('%B %d, %Y') }}</td>
+            </tr>
+        </table>
     </div>
 
     <div class="section">
@@ -142,17 +184,23 @@
             <div class="signature-block">
                 <p><strong>Vertica AI (Service Provider):</strong></p>
                 {% if contract.agent_signature %}
-                <img src="{{ contract.agent_signature }}" alt="Agent Signature" style="max-width: 300px;">
-                <p>Date: {{ contract.agent_signed_date.strftime('%B %d, %Y') }}</p>
+                <img src="{{ contract.agent_signature }}" style="max-width: 200px; max-height: 100px;">
                 {% endif %}
+                <div class="signature-line">
+                    <p>Date: {{ contract.agent_signed_date.strftime('%B %d, %Y') if contract.agent_signed_date else '' }}</p>
+                    <p>Email: {{ contract.agent_email }}</p>
+                </div>
             </div>
-
-            <div class="signature-block">
-                <p><strong>{{ contract.client_name }} (Client):</strong></p>
+            
+            <div class="signature-box" style="width: 45%;">
+                <p><strong>For Client:</strong></p>
                 {% if contract.client_signature %}
-                <img src="{{ contract.client_signature }}" alt="Client Signature" style="max-width: 300px;">
-                <p>Date: {{ contract.client_signed_date.strftime('%B %d, %Y') }}</p>
+                <img src="{{ contract.client_signature }}" style="max-width: 200px; max-height: 100px;">
                 {% endif %}
+                <div class="signature-line">
+                    <p>Date: {{ contract.client_signed_date.strftime('%B %d, %Y') if contract.client_signed_date else '' }}</p>
+                    <p>Email: {{ contract.client_email }}</p>
+                </div>
             </div>
         </div>
     </div>

@@ -88,6 +88,19 @@ def sign_contract(contract_id):
         flash('Contract not found', 'error')
         return redirect(url_for('index'))
     
+    # Convert date strings to datetime objects
+    try:
+        if contract.get('created_at'):
+            contract['created_at'] = datetime.fromisoformat(contract['created_at'].replace('Z', '+00:00'))
+        if contract.get('start_date'):
+            contract['start_date'] = datetime.fromisoformat(contract['start_date'])
+        if contract.get('end_date'):
+            contract['end_date'] = datetime.fromisoformat(contract['end_date'])
+    except Exception as e:
+        print(f"Date conversion error: {str(e)}")
+        # Set default dates if conversion fails
+        contract['created_at'] = datetime.utcnow()
+        
     # Verify if the signer is authorized
     if signer_email not in [contract['agent_email'], contract['client_email']]:
         flash('Unauthorized to sign this contract', 'error')
@@ -198,4 +211,4 @@ def index():
     return render_template('index.html', contracts=contracts.data)
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=5001, debug=True)
+    app.run(host='0.0.0.0', port=5001, debug=True)
