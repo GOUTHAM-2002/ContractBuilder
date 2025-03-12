@@ -102,7 +102,9 @@
 
     <div class="section">
         <div class="section-title">2. SCOPE OF WORK</div>
-        <div class="content">{{ contract.project_scope|safe }}</div>
+        <div class="content scope-content">
+            {{ contract.project_scope|safe }}
+        </div>
         <table>
             <tr>
                 <th>Total Amount</th>
@@ -206,3 +208,25 @@
     </div>
 </body>
 </html>
+
+<style>
+    /* Add these styles in the style section */
+    .scope-content {
+        margin: 20px 0;
+    }
+    .scope-content ul, .scope-content ol {
+        margin-left: 20px;
+        margin-bottom: 15px;
+    }
+    .scope-content li {
+        margin-bottom: 8px;
+    }
+    .scope-content h1, .scope-content h2, .scope-content h3, 
+    .scope-content h4, .scope-content h5, .scope-content h6 {
+        color: #1a73e8;
+        margin: 15px 0 10px 0;
+    }
+    .scope-content p {
+        margin-bottom: 10px;
+    }
+</style>

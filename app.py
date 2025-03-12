@@ -8,35 +8,57 @@ from datetime import datetime
 from weasyprint import HTML
 from io import BytesIO
 import base64
+from flask import Flask, render_template, request, redirect, url_for, flash, send_file
+from config import Config
+from models import ContractManager
+from forms import ContractForm
+import sendgrid
+from sendgrid.helpers.mail import Mail, Email, To, Content
+import os
+from datetime import datetime
+from weasyprint import HTML
+from io import BytesIO
+import base64
+
 
 app = Flask(__name__)
 app.config.from_object(Config)
 sg = sendgrid.SendGridAPIClient(api_key=os.getenv('SENDGRID_API_KEY'))
 
+# At the top with other imports
+from forms import ContractForm
+
+# Make sure you have a secret key set
+app.config['SECRET_KEY'] = 'your-secret-key-here'  # Change this to a secure secret key
+
 @app.route('/create_contract', methods=['GET', 'POST'])
 def create_contract():
     form = ContractForm()
     if form.validate_on_submit():
-        contract_data = {
-            'client_name': form.client_name.data,
-            'client_email': form.client_email.data,
-            'agent_email': form.agent_email.data,
-            'project_scope': form.project_scope.data,
-            'total_amount': float(form.total_amount.data),
-            'start_date': form.start_date.data.isoformat(),
-            'end_date': form.end_date.data.isoformat(),
-            'status': 'pending',
-            'created_at': datetime.utcnow().isoformat()
-        }
-        
-        result = ContractManager.create_contract(contract_data)
-        contract_id = result.data[0]['id']
-        
-        # Send emails to both parties
-        send_contract_emails(contract_data, contract_id)
-        
-        flash('Contract created successfully!', 'success')
-        return redirect(url_for('view_contract', contract_id=contract_id))
+        try:
+            contract_data = {
+                'client_name': form.client_name.data,
+                'client_email': form.client_email.data,
+                'agent_email': form.agent_email.data,
+                'project_scope': form.project_scope.data,
+                'total_amount': float(form.total_amount.data),
+                'start_date': form.start_date.data.isoformat(),
+                'end_date': form.end_date.data.isoformat(),
+                'status': 'pending',
+                'created_at': datetime.utcnow().isoformat()
+            }
+            
+            result = ContractManager.create_contract(contract_data)
+            if result and result.data:
+                contract_id = result.data[0]['id']
+                send_contract_emails(contract_data, contract_id)
+                flash('Contract created successfully!', 'success')
+                return redirect(url_for('view_contract', contract_id=contract_id))
+            else:
+                flash('Error creating contract. Please try again.', 'error')
+        except Exception as e:
+            flash(f'Error: {str(e)}', 'error')
+    
     return render_template('create_contract.html', form=form)
 
 def send_contract_emails(contract_data, contract_id):
@@ -151,16 +173,30 @@ def sign_contract(contract_id):
 def signature_confirmation():
     return render_template('signature_confirmation.html')
 
+@app.route('/')
+def index():
+    try:
+        contracts = ContractManager.get_all_contracts()
+        if hasattr(contracts, 'error') and contracts.error:
+            flash('Unable to load contracts. Please try again later.', 'error')
+            return render_template('index.html', contracts=[])
+        return render_template('index.html', contracts=contracts.data)
+    except Exception as e:
+        flash('Service temporarily unavailable. Please try again later.', 'error')
+        return render_template('index.html', contracts=[])
+
 @app.route('/view_contract/<int:contract_id>')
 def view_contract(contract_id):
-    result = ContractManager.get_contract(contract_id)
-    contract = result.data[0] if result.data else None
-    
-    if not contract:
-        flash('Contract not found', 'error')
+    try:
+        result = ContractManager.get_contract(contract_id)
+        if not result or not result.data:
+            flash('Contract not found or service unavailable', 'error')
+            return redirect(url_for('index'))
+        contract = result.data[0]
+        return render_template('view_contract.html', contract=contract)
+    except Exception as e:
+        flash('Service temporarily unavailable. Please try again later.', 'error')
         return redirect(url_for('index'))
-    
-    return render_template('view_contract.html', contract=contract)
 
 @app.route('/download_contract/<int:contract_id>')
 def download_contract(contract_id):
@@ -200,15 +236,7 @@ def download_contract(contract_id):
         as_attachment=True,
         mimetype='application/pdf'
     )
-# Add this after the existing imports
-from forms import ContractForm
-from flask import send_file
-
-# Add this before the first route
-@app.route('/')
-def index():
-    contracts = ContractManager.get_all_contracts()
-    return render_template('index.html', contracts=contracts.data)
+# At the top of the file, update imports
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001, debug=True)

@@ -10,35 +10,56 @@
             </div>
             <div class="card-body">
                 <form method="POST" action="{{ url_for('create_contract') }}">
-                    {{ form.hidden_tag() }}
+                    {{ form.csrf_token }}
                     <div class="mb-3">
                         <label class="form-label">Client Name</label>
                         {{ form.client_name(class="form-control") }}
+                        {% if form.client_name.errors %}
+                            <div class="text-danger">{{ form.client_name.errors[0] }}</div>
+                        {% endif %}
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Client Email</label>
                         {{ form.client_email(class="form-control") }}
+                        {% if form.client_email.errors %}
+                            <div class="text-danger">{{ form.client_email.errors[0] }}</div>
+                        {% endif %}
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Agent Email</label>
                         {{ form.agent_email(class="form-control") }}
+                        {% if form.agent_email.errors %}
+                            <div class="text-danger">{{ form.agent_email.errors[0] }}</div>
+                        {% endif %}
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Project Scope</label>
-                        {{ form.project_scope(class="form-control", rows="10") }}
+                        {{ form.project_scope(class="form-control tinymce") }}
+                        {% if form.project_scope.errors %}
+                            <div class="text-danger">{{ form.project_scope.errors[0] }}</div>
+                        {% endif %}
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Total Amount ($)</label>
                         {{ form.total_amount(class="form-control") }}
+                        {% if form.total_amount.errors %}
+                            <div class="text-danger">{{ form.total_amount.errors[0] }}</div>
+                        {% endif %}
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Start Date</label>
                             {{ form.start_date(class="form-control", type="date") }}
+                            {% if form.start_date.errors %}
+                                <div class="text-danger">{{ form.start_date.errors[0] }}</div>
+                            {% endif %}
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label">End Date</label>
                             {{ form.end_date(class="form-control", type="date") }}
+                            {% if form.end_date.errors %}
+                                <div class="text-danger">{{ form.end_date.errors[0] }}</div>
+                            {% endif %}
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary">Create Contract</button>
@@ -47,4 +68,26 @@
         </div>
     </div>
 </div>
+
+<script>
+tinymce.init({
+    selector: '.tinymce',
+    height: 500,
+    plugins: [
+        'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+        'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+        'insertdatetime', 'media', 'table', 'help', 'wordcount'
+    ],
+    toolbar: 'undo redo | formatselect | ' +
+    'bold italic backcolor | alignleft aligncenter ' +
+    'alignright alignjustify | bullist numlist outdent indent | ' +
+    'removeformat | help',
+    content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial; font-size: 14px; }',
+    setup: function(editor) {
+        editor.on('change', function() {
+            editor.save();
+        });
+    }
+});
+</script>
 {% endblock %}

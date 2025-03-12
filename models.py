@@ -28,4 +28,16 @@ class ContractManager:
 
     @staticmethod
     def get_all_contracts():
-        return supabase.table('contracts').select('*').execute()
+        try:
+            return supabase.table('contracts').select('*').execute()
+        except Exception as e:
+            print(f"Database error: {str(e)}")
+            return type('Response', (), {'data': [], 'error': str(e)})
+
+    @staticmethod
+    def get_contract(contract_id):
+        try:
+            return supabase.table('contracts').select('*').eq('id', contract_id).execute()
+        except Exception as e:
+            print(f"Database error: {str(e)}")
+            return type('Response', (), {'data': [], 'error': str(e)})

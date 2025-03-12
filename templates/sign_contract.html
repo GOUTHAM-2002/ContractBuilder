@@ -37,12 +37,33 @@
 
                     <div class="section mb-4">
                         <h5>2. SCOPE OF WORK:</h5>
-                        <div class="border-start ps-3 mb-3">
+                        <div class="border-start ps-3 mb-3 scope-content">
                             {{ contract.project_scope|safe }}
                         </div>
                         <p><strong>Total Amount:</strong> ${{ contract.total_amount }}</p>
-                        <p><strong>Project Duration:</strong> {{ contract.start_date }} to {{ contract.end_date }}</p>
+                        <p><strong>Project Duration:</strong> {{ contract.start_date.strftime('%B %d, %Y') if contract.start_date else '' }} to {{ contract.end_date.strftime('%B %d, %Y') if contract.end_date else '' }}</p>
                     </div>
+
+                    <style>
+                        .scope-content {
+                            margin: 15px 0;
+                        }
+                        .scope-content ul, .scope-content ol {
+                            margin-left: 20px;
+                            margin-bottom: 15px;
+                        }
+                        .scope-content li {
+                            margin-bottom: 8px;
+                        }
+                        .scope-content h1, .scope-content h2, .scope-content h3, 
+                        .scope-content h4, .scope-content h5, .scope-content h6 {
+                            color: #1a73e8;
+                            margin: 15px 0 10px 0;
+                        }
+                        .scope-content p {
+                            margin-bottom: 10px;
+                        }
+                    </style>
 
                     <div class="section mb-4">
                         <h5>3. PAYMENT TERMS:</h5>
@@ -55,7 +76,7 @@
 
                     <div class="section mb-4">
                         <h5>4. TERM & TERMINATION:</h5>
-                        <p><strong>Term:</strong> This Agreement shall commence on {{ contract.start_date }} and remain in effect until {{ contract.end_date }}, or until all deliverables are completed and accepted by the Client.</p>
+                        <p><strong>Term:</strong> This Agreement shall commence on {{ contract.start_date.strftime('%B %d, %Y') if contract.start_date else '' }} and remain in effect until {{ contract.end_date.strftime('%B %d, %Y') if contract.end_date else '' }}, or until all deliverables are completed and accepted by the Client.</p>
                         <p><strong>Termination:</strong> In the event of termination, the parties agree to resolve any outstanding matters through an amicable "talking stage" negotiation.</p>
                     </div>
 
@@ -90,7 +111,7 @@
                     
                     <div class="mt-3">
                         <p><strong>Total Amount:</strong> ${{ contract.total_amount }}</p>
-                        <p><strong>Project Duration:</strong> {{ contract.start_date }} to {{ contract.end_date }}</p>
+                        <p><strong>Project Duration:</strong> {{ contract.start_date.strftime('%B %d, %Y') if contract.start_date else '' }} to {{ contract.end_date.strftime('%B %d, %Y') if contract.end_date else '' }}</p>
                     </div>
                 </div>
 
